@@ -1,45 +1,84 @@
-import pygame
-
+import pygame as pg
 import sys
+from settings import *
+from sprites import *
 
-import os
+class Game:
+    def __init__(self):
+        pg.init()
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(TITLE)
+        self.clock = pg.time.Clock()
+        pg.key.set_repeat(500, 100)
+        self.load_data()
 
-from pygame.locals import *
+    def load_data(self):
+        pass
 
+    def new(self):
+        # initialize all variables and do all the setup for a new game
+        self.all_sprites = pg.sprite.Group()
+        self.walls = pg.sprite.Group()
+        self.player = Player(self, 10, 10)
+        for x in range(10, 20):
+            Wall(self, x, 5)
 
-pygame.init()  # initialize pygame
+    def run(self):
+        # game loop - set self.playing = False to end the game
+        self.playing = True
+        while self.playing:
+            self.dt = self.clock.tick(FPS) / 1000
+            self.events()
+            self.update()
+            self.draw()
 
-clock = pygame.time.Clock()
+    def quit(self):
+        pg.quit()
+        sys.exit()
 
-screen = pygame.display.set_mode((600, 480))
+    def update(self):
+        # update portion of the game loop
+        self.all_sprites.update()
 
+    def draw_grid(self):
+        for x in range(0, WIDTH, TILESIZE):
+            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
+        for y in range(0, HEIGHT, TILESIZE):
+            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
-# Load the background image here. Make sure the file exists!
+    def draw(self):
+        self.screen.fill(BGCOLOR)
+        self.draw_grid()
+        self.all_sprites.draw(self.screen)
+        pg.display.flip()
 
-bg = pygame.image.load(os.path.join("first floord.png"))
+    def events(self):
+        # catch all events here
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self.quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.quit()
+                if event.key == pg.K_LEFT:
+                    self.player.move(dx=-1)
+                if event.key == pg.K_RIGHT:
+                    self.player.move(dx=1)
+                if event.key == pg.K_UP:
+                    self.player.move(dy=-1)
+                if event.key == pg.K_DOWN:
+                    self.player.move(dy=1)
 
-pygame.mouse.set_visible(0)
+    def show_start_screen(self):
+        pass
 
-pygame.display.set_caption('Dream Hotel')
+    def show_go_screen(self):
+        pass
 
-
-# fix indentation
-
-
+# create the game object
+g = Game()
+g.show_start_screen()
 while True:
-
-    clock.tick(60)
-
-    screen.blit(bg, (0, 0))
-
-    x, y = pygame.mouse.get_pos()
-
-
-    for event in pygame.event.get():
-
-        if event.type == pygame.QUIT:
-
-            sys.exit()
-
-
-    pygame.display.update()
+    g.new()
+    g.run()
+    g.show_go_screen()
