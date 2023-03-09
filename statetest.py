@@ -18,6 +18,10 @@ class level(StateMachine):
     @next.on
     def test2(self):
         print("current stage: floor2")
+    
+    @next.on
+    def test3(self):
+        print("current stage: floor3")
 
         
     

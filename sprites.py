@@ -129,6 +129,8 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.game.doors, True) #False fordi if True it deletes sprite
         if hits:
             scene.start()
+            self.game.skift = True
+            
     
     def animate(self):
         if self.facing == "down":
@@ -275,6 +277,24 @@ class Ground(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 class Door(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+
+        self.game = game
+        self._layer = DOOR_LAYER
+        self.groups = self.game.all_sprites, self.game.doors
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.door_spritesheet.get_sprite(64, 312, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+class FakeDoor(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
         self.game = game
