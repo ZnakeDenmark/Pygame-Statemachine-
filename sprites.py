@@ -130,7 +130,6 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.game.doors, True) #False fordi if True it deletes sprite
         if hits:
             scene.start()
-            self.game.skift = True
             
     
     def animate(self):
@@ -184,7 +183,7 @@ class Enemy(pygame.sprite.Sprite):
         self.facing = random.choice(['left', 'right'])
         self.animation_loop = 1
         self.movement_loop = 0
-        self.max_travel = random.randint(7,30)
+        self.max_travel = random.randint(7,40)
 
         self.image = self.game.enemy_spritesheet.get_sprite (3, 2, self.width, self.height)
 

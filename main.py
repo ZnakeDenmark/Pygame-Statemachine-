@@ -2,9 +2,9 @@ import pygame
 from sprites import *
 from config import *
 import sys
+from statetest import level
 #import * betyder at det tager hele kode
 class Game:
-    skift = 0
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIN_WIDTH, Win_HEIGHT)) #sætter hvor stort skærm skal være
@@ -28,6 +28,8 @@ class Game:
                     Door(self, j, i)
                 if column == "B":
                     Block(self, j, i)
+                if column == "F":
+                    FakeDoor(self, j, i)
                 if column == "P":
                     self.player = Player(self, j , i)
                 if column == "E":
@@ -96,8 +98,8 @@ class Game:
     def main(self):
         #game loop
         while self.playing:
-            if self.skift:
-                self.skift = False
+            if level.skift == "no more testing":
+                level.skift = "done"
                 self.createTilemap2()
             self.events()
             self.update()
