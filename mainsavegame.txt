@@ -4,6 +4,7 @@ from config import *
 import sys
 #import * betyder at det tager hele kode
 class Game:
+    skift = 0
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIN_WIDTH, Win_HEIGHT)) #sætter hvor stort skærm skal være
@@ -25,6 +26,23 @@ class Game:
                 Ground(self, j, i)
                 if column == "D":
                     Door(self, j, i)
+                if column == "B":
+                    Block(self, j, i)
+                if column == "P":
+                    self.player = Player(self, j , i)
+                if column == "E":
+                    Enemy(self, j, i)
+    
+    def createTilemap2(self):
+        for sprite in self.all_sprites:
+            sprite.kill()
+        for i, row in enumerate(tilemap2):
+            for j, column in enumerate(row):
+                Ground(self, j, i)
+                if column == "D":
+                    Door(self, j, i)
+                if column == "F":
+                    FakeDoor(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
@@ -78,6 +96,9 @@ class Game:
     def main(self):
         #game loop
         while self.playing:
+            if self.skift:
+                self.skift = False
+                self.createTilemap2()
             self.events()
             self.update()
             self.draw()

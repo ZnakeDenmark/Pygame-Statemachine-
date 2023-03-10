@@ -2,15 +2,9 @@ import pygame
 from sprites import *
 from config import *
 import sys
-from statemachine import statemachine, State
 #import * betyder at det tager hele kode
-class Game(statemachine):
-    floor1 = State("floor1", initial=True)
-    floor2 = State("floor2")
-
-    start = floor1.to(floor1)
-    next = floor1.to(floor2)
-    @start.on
+class Game:
+    skift = 0
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIN_WIDTH, Win_HEIGHT)) #sætter hvor stort skærm skal være
@@ -21,63 +15,17 @@ class Game(statemachine):
         self.character_spritesheet = Spritesheet('img/character.png')
         self.terrain_spritesheet = Spritesheet('img/terrain.png')
         self.door_spritesheet = Spritesheet('img/terrain.png')
-        self.fakedoor_spritesheet = Spritesheet('img/terrain.png')
         self.enemy_spritesheet = Spritesheet('img/enemy.png')
         self.attack_spritesheet = Spritesheet('img/attack.png')
         self.intro_background = pygame.image.load('./img/introbackground.png')
         self.go_background = pygame.image.load('./img/gameover.png')
-    
 
-
-    @next.on
-    def intro_screen(self):
-        intro = True
-
-        title = self.font.render('Dream Hotel', True, BLACK)
-        title_rect = title.get_rect(x=10, y=10)
-
-        play_button = Button(10, 50, 100, 50, WHITE, BLACK, 'Play', 32)
-
-        while intro:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    intro = False
-                    self.running = False
-
-            mouse_pos = pygame.mouse.get_pos()
-            mouse_pressed = pygame.mouse.get_pressed()
-
-            if play_button.is_pressed(mouse_pos, mouse_pressed):
-                intro = False
-            
-            self.screen.blit(self.intro_background, (0,0))
-            self.screen.blit(title, title_rect)
-            self.screen.blit(play_button.image, play_button.rect)
-            self.clock.tick(FPS)
-            pygame.display.update()
-    
-    @next.on
-    def new(self):
-        #nyt spil starter
-        self.playing = True
-        self.skift = False
-
-        self.all_sprites = pygame.sprite.LayeredUpdates()
-        self.blocks = pygame.sprite.LayeredUpdates()
-        self.enemies = pygame.sprite.LayeredUpdates()
-        self.attacks = pygame.sprite.LayeredUpdates()
-        self.doors = pygame.sprite.LayeredUpdates()
-
-
-    @next.on
     def createTilemap(self):
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
                 Ground(self, j, i)
                 if column == "D":
                     Door(self, j, i)
-                if column == "F":
-                    FakeDoor(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
@@ -85,14 +33,6 @@ class Game(statemachine):
                 if column == "E":
                     Enemy(self, j, i)
     
-    @next.on
-    def fixed(self):
-        g = Game()
-        while g.running:
-            g.main()
-            g.game_over()
-
-
     def createTilemap2(self):
         for sprite in self.all_sprites:
             sprite.kill()
@@ -110,8 +50,17 @@ class Game(statemachine):
                 if column == "E":
                     Enemy(self, j, i)
 
+    def new(self):
+        #nyt spil starter
+        self.playing = True
 
+        self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.blocks = pygame.sprite.LayeredUpdates()
+        self.enemies = pygame.sprite.LayeredUpdates()
+        self.attacks = pygame.sprite.LayeredUpdates()
+        self.doors = pygame.sprite.LayeredUpdates()
 
+        self.createTilemap()
         
     
     def events(self):
@@ -180,9 +129,38 @@ class Game(statemachine):
             self.clock.tick(FPS)
             pygame.display.update()
 
+    def intro_screen(self):
+        intro = True
 
-scene = Game()
-scene.start()
+        title = self.font.render('Dream Hotel', True, BLACK)
+        title_rect = title.get_rect(x=10, y=10)
+
+        play_button = Button(10, 50, 100, 50, WHITE, BLACK, 'Play', 32)
+
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    intro = False
+                    self.running = False
+
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_pressed = pygame.mouse.get_pressed()
+
+            if play_button.is_pressed(mouse_pos, mouse_pressed):
+                intro = False
+            
+            self.screen.blit(self.intro_background, (0,0))
+            self.screen.blit(title, title_rect)
+            self.screen.blit(play_button.image, play_button.rect)
+            self.clock.tick(FPS)
+            pygame.display.update()
+
+g = Game()
+g.intro_screen()
+g.new()
+while g.running:
+    g.main()
+    g.game_over()
 
 
 pygame.quit()

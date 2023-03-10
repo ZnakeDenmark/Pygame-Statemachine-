@@ -99,6 +99,7 @@ class Player(pygame.sprite.Sprite):
             self.kill()
             self.game.playing = False
 
+
     def collide_blocks(self, direction):
         if direction == "x":
             hits = pygame.sprite.spritecollide(self, self.game.blocks, False) #False fordi if True it deletes sprite
