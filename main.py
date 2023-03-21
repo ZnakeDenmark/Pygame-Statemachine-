@@ -19,26 +19,11 @@ class Game:
         self.attack_spritesheet = Spritesheet('img/attack.png')
         self.intro_background = pygame.image.load('./img/introbackground.png')
         self.go_background = pygame.image.load('./img/gameover.png')
-
-    def createTilemap(self):
-        for i, row in enumerate(tilemap):
-            for j, column in enumerate(row):
-                Ground(self, j, i)
-                if column == "D":
-                    Door(self, j, i)
-                if column == "B":
-                    Block(self, j, i)
-                if column == "F":
-                    FakeDoor(self, j, i)
-                if column == "P":
-                    self.player = Player(self, j , i)
-                if column == "E":
-                    Enemy(self, j, i)
     
-    def createTilemap2(self):
+    def createTilemap(self, Tilemap):
         for sprite in self.all_sprites:
             sprite.kill()
-        for i, row in enumerate(tilemap2):
+        for i, row in enumerate(Tilemap):
             for j, column in enumerate(row):
                 Ground(self, j, i)
                 if column == "D":
@@ -62,7 +47,7 @@ class Game:
         self.attacks = pygame.sprite.LayeredUpdates()
         self.doors = pygame.sprite.LayeredUpdates()
 
-        self.createTilemap()
+        self.createTilemap(tilemap)
         
     
     def events(self):
@@ -100,7 +85,12 @@ class Game:
         while self.playing:
             if level.skift == "no more testing":
                 level.skift = "done"
-                self.createTilemap2()
+                if level.lvl == "1":
+                    self.createTilemap(tilemap)
+                elif level.lvl == "2":
+                    self.createTilemap(tilemap2)
+                elif level.lvl == "3":
+                    self.createTilemap(tilemap3)
             self.events()
             self.update()
             self.draw()
@@ -123,6 +113,15 @@ class Game:
             mouse_pressed = pygame.mouse.get_pressed()
 
             if restart_button.is_pressed(mouse_pos, mouse_pressed):
+                if level.skift == "done":
+                    if level.lvl == "2":
+                        level.skift = "tester"
+                        level.lvl = "1"
+                        scene.reset()
+                    elif level.lvl == "3":
+                        level.skift = "tester"
+                        level.lvl = "1"
+                        scene.reset2()
                 self.new()
                 self.main()
             self.screen.blit(self.go_background, (0,0))
